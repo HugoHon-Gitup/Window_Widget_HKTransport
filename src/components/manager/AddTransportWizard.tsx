@@ -493,19 +493,21 @@ export const AddTransportWizard: React.FC<AddTransportWizardProps> = ({ isZH, on
                   </div>
                 ) : (
                   <select
-                    value={selectedKmbStop?.seq || 1}
+                    value={selectedKmbStop ? Number(selectedKmbStop.seq) : (kmbStops[0] ? Number(kmbStops[0].seq) : 1)}
                     onChange={(e) => {
                       const seq = parseInt(e.target.value, 10);
-                      const s = kmbStops.find((item) => item.seq === seq) || kmbStops[0];
-                      setSelectedKmbStop(s);
+                      const s = kmbStops.find((item) => Number(item.seq) === seq);
+                      if (s) {
+                        setSelectedKmbStop(s);
+                      }
                     }}
-                    className="w-full bg-slate-800 text-slate-100 border border-slate-700 rounded-lg p-2.5 text-xs font-medium"
+                    className="w-full bg-slate-800 text-slate-100 border border-slate-700 rounded-lg p-2.5 text-xs font-medium focus:ring-2 focus:ring-blue-500"
                   >
                     {kmbStops.map((stop) => {
                       const name = kmbStopNames.get(stop.stop);
                       const label = name ? (isZH ? name.tc : name.en) : stop.stop;
                       return (
-                        <option key={`${stop.stop}-${stop.seq}`} value={stop.seq}>
+                        <option key={`${stop.stop}-${stop.seq}`} value={Number(stop.seq)}>
                           #{stop.seq} - {cleanBusStopCode(label)}
                         </option>
                       );
@@ -594,19 +596,21 @@ export const AddTransportWizard: React.FC<AddTransportWizardProps> = ({ isZH, on
                     </div>
                   ) : (
                     <select
-                      value={selectedCtbStop?.seq || 1}
+                      value={selectedCtbStop ? Number(selectedCtbStop.seq) : (ctbStops[0] ? Number(ctbStops[0].seq) : 1)}
                       onChange={(e) => {
                         const seq = parseInt(e.target.value, 10);
-                        const s = ctbStops.find((item) => item.seq === seq) || ctbStops[0];
-                        setSelectedCtbStop(s);
+                        const s = ctbStops.find((item) => Number(item.seq) === seq);
+                        if (s) {
+                          setSelectedCtbStop(s);
+                        }
                       }}
-                      className="w-full bg-slate-800 text-slate-100 border border-slate-700 rounded-lg p-2.5 text-xs font-medium"
+                      className="w-full bg-slate-800 text-slate-100 border border-slate-700 rounded-lg p-2.5 text-xs font-medium focus:ring-2 focus:ring-amber-500"
                     >
                       {ctbStops.map((stop) => {
                         const name = ctbStopNames.get(stop.stop);
                         const label = name ? (isZH ? name.tc : name.en) : stop.stop;
                         return (
-                          <option key={`${stop.stop}-${stop.seq}`} value={stop.seq}>
+                          <option key={`${stop.stop}-${stop.seq}`} value={Number(stop.seq)}>
                             #{stop.seq} - {cleanBusStopCode(label)}
                           </option>
                         );

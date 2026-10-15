@@ -63,6 +63,50 @@ describe('KMB, Citybus & GMB Parsers', () => {
     expect(snapshot.arrivals[0].remarksEN).toBe('Scheduled');
   });
 
+  it('parses KMB ETA with string vs numeric sequence types', () => {
+    const config: SavedTransportConfiguration = {
+      id: 'kmb-960x',
+      schemaVersion: 1,
+      nickname: '960X Home',
+      operatorType: 'kmb',
+      routeNumber: '960X',
+      stopId: '5FCE752FBBAB3B14',
+      stopSequence: 3,
+      directionCode: 'O',
+      displayLineOrRoute: '960X',
+      displayBoardingStopEN: 'Model Housing Estate',
+      displayBoardingStopTC: '模範邨',
+      displayDirectionEN: 'Towards Hung Shui Kiu',
+      displayDirectionTC: '往 洪水橋',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const mockResponseWithStringSeq = {
+      type: 'ETA',
+      version: '1.0',
+      generated_timestamp: '2026-10-15T15:30:00+08:00',
+      data: [
+        {
+          co: 'KMB',
+          route: '960X',
+          dir: 'O',
+          service_type: 1,
+          seq: '3', // string from API
+          dest_tc: '洪水橋',
+          dest_en: 'Hung Shui Kiu',
+          eta_seq: 1,
+          eta: '2026-10-15T15:40:00+08:00',
+        },
+      ],
+    };
+
+    const snapshot = KMBClient.getInstance().parseKMBETA(mockResponseWithStringSeq, config);
+    expect(snapshot.status).toBe('ok');
+    expect(snapshot.arrivals.length).toBe(1);
+    expect(snapshot.arrivals[0].destinationNameTC).toBe('洪水橋');
+  });
+
   it('parses Citybus ETA correctly', () => {
     const config: SavedTransportConfiguration = {
       id: 'ctb-1',

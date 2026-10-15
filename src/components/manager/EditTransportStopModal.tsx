@@ -54,7 +54,7 @@ export const EditTransportStopModal: React.FC<EditTransportStopModalProps> = ({
           setStopList(
             stops.map((s) => ({
               id: s.stop,
-              seq: s.seq,
+              seq: Number(s.seq),
               label: `#${s.seq} - ${
                 nameMap.get(s.stop) ? (isZH ? nameMap.get(s.stop)!.tc : nameMap.get(s.stop)!.en) : s.stop
               }`,
@@ -80,7 +80,7 @@ export const EditTransportStopModal: React.FC<EditTransportStopModalProps> = ({
           setStopList(
             stops.map((s) => ({
               id: s.stop,
-              seq: s.seq,
+              seq: Number(s.seq),
               label: `#${s.seq} - ${
                 nameMap.get(s.stop) ? (isZH ? nameMap.get(s.stop)!.tc : nameMap.get(s.stop)!.en) : s.stop
               }`,
@@ -127,7 +127,7 @@ export const EditTransportStopModal: React.FC<EditTransportStopModalProps> = ({
         updated.displayBoardingStopTC = sta.nameTC;
       }
     } else {
-      const match = stopList.find((s) => s.seq === selectedSeq);
+      const match = stopList.find((s) => Number(s.seq) === Number(selectedSeq));
       if (match) {
         updated.stopId = match.id;
         updated.stopSequence = match.seq;
@@ -182,10 +182,10 @@ export const EditTransportStopModal: React.FC<EditTransportStopModalProps> = ({
               <select
                 value={selectedSeq}
                 onChange={(e) => setSelectedSeq(parseInt(e.target.value, 10))}
-                className="w-full bg-slate-800 text-slate-100 border border-slate-700 rounded-lg p-2.5 text-xs font-medium"
+                className="w-full bg-slate-800 text-slate-100 border border-slate-700 rounded-lg p-2.5 text-xs font-medium focus:ring-2 focus:ring-blue-500"
               >
                 {stopList.map((item) => (
-                  <option key={item.seq} value={item.seq}>
+                  <option key={item.seq} value={Number(item.seq)}>
                     {item.label}
                   </option>
                 ))}

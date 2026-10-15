@@ -73,7 +73,11 @@ export class CitybusClient {
       });
       if (!res.ok) throw new Error('Failed to fetch Citybus route stops');
       const json = await res.json();
-      const stops: CitybusRouteStopItem[] = json.data || [];
+      const rawStops = json.data || [];
+      const stops: CitybusRouteStopItem[] = rawStops.map((s: any) => ({
+        ...s,
+        seq: typeof s.seq === 'string' ? parseInt(s.seq, 10) : Number(s.seq),
+      }));
       return stops.sort((a, b) => a.seq - b.seq);
     } finally {
       clearTimeout(timeout);
@@ -167,7 +171,7 @@ export class CitybusClient {
 
       dirMatchedItems.push(item);
 
-      if (targetSeq != null && record.seq === targetSeq) {
+      if (targetSeq != null && Number(record.seq) === Number(targetSeq)) {
         exactItems.push(item);
       }
     }
