@@ -99,12 +99,43 @@ function toggleWidget() {
   }
 }
 
+export function getAppIconPath(): string {
+  const candidates = [
+    path.join(__dirname, '../public/icon.ico'),
+    path.join(__dirname, '../dist/icon.ico'),
+    path.join(app.getAppPath(), 'public/icon.ico'),
+    path.join(app.getAppPath(), 'dist/icon.ico'),
+    path.join(__dirname, '../public/icon.png'),
+    path.join(__dirname, '../dist/icon.png'),
+    path.join(app.getAppPath(), 'dist/icon.png'),
+    path.join(app.getAppPath(), 'public/icon.png'),
+    path.join(process.resourcesPath, 'icon.ico'),
+    path.join(process.resourcesPath, 'icon.png'),
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) {
+      return c;
+    }
+  }
+  return path.join(__dirname, '../public/icon.ico');
+}
+
+export function getAppIcon(): Electron.NativeImage {
+  const iconPath = getAppIconPath();
+  if (fs.existsSync(iconPath)) {
+    return nativeImage.createFromPath(iconPath);
+  }
+  return nativeImage.createEmpty();
+}
+
 function createWidgetWindow() {
   const saved = loadWidgetBounds();
   const currentSize = saved.size === 'small' ? 'small' : 'medium';
   const defaultBounds = WIDGET_SIZES[currentSize];
   const width = saved.width && saved.width >= 220 ? saved.width : defaultBounds.width;
   const height = saved.height && saved.height >= 140 ? saved.height : defaultBounds.height;
+  const iconPath = getAppIconPath();
+  const appIcon = getAppIcon();
 
   widgetWindow = new BrowserWindow({
     width,
@@ -121,6 +152,7 @@ function createWidgetWindow() {
     resizable: true,
     alwaysOnTop: true,
     skipTaskbar: false,
+    icon: fs.existsSync(iconPath) ? iconPath : appIcon,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -175,6 +207,9 @@ function createManagerWindow() {
     return;
   }
 
+  const iconPath = getAppIconPath();
+  const appIcon = getAppIcon();
+
   managerWindow = new BrowserWindow({
     width: 860,
     height: 700,
@@ -182,6 +217,7 @@ function createManagerWindow() {
     minHeight: 500,
     title: '上車易 EasyBoard - 香港交通到站管理',
     backgroundColor: '#0f172a',
+    icon: fs.existsSync(iconPath) ? iconPath : appIcon,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -206,12 +242,7 @@ function createManagerWindow() {
 }
 
 function createTray() {
-  const icon = nativeImage.createFromBuffer(
-    Buffer.from(
-      'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAHBJREFUOE+1k0EKwCAMBM/z+L6e/Y2iUEsL0kIvhj24LDO7qVomxthFpCKSvfcZY9wz8xhjHBHN8wEgwA1sA38GvAP5V/1E6H9gK+j1bAW9nndB76B/D24F3Qj6v8GtoO/9/0GvoL7vVlB3130AdHlM1Wf2b+sAAAAASUVORK5CYII=',
-      'base64'
-    )
-  );
+  const icon = getAppIcon();
 
   tray = new Tray(icon);
   tray.setToolTip('上車易 EasyBoard - 香港交通小工具 (按快捷鍵 Ctrl+Shift+W 顯示/隱藏)');
@@ -417,6 +448,9 @@ ipcMain.on('storage-save-settings', (_, settings) => {
 });
 
 app.whenReady().then(() => {
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('com.easyboard.hktransportwidget');
+  }
   createWidgetWindow();
   createTray();
 

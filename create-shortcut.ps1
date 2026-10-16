@@ -3,7 +3,10 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shortcutPath = Join-Path $desktop '上車易 EasyBoard.lnk'
 $vbsPath = Join-Path $scriptDir 'run-widget.vbs'
-$iconPath = Join-Path $scriptDir 'node_modules\electron\dist\electron.exe'
+$customIcon = Join-Path $scriptDir 'public\icon.ico'
+$buildIcon = Join-Path $scriptDir 'build\icon.ico'
+$fallbackIcon = Join-Path $scriptDir 'node_modules\electron\dist\electron.exe'
+$iconPath = if (Test-Path $customIcon) { $customIcon } elseif (Test-Path $buildIcon) { $buildIcon } else { $fallbackIcon }
 
 $ws = New-Object -ComObject WScript.Shell
 $shortcut = $ws.CreateShortcut($shortcutPath)

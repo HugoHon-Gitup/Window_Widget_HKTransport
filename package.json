@@ -9,6 +9,7 @@
     "start": "node launcher.cjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "generate-icons": "powershell -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
     "dist": "npm run build && electron-builder --win",
     "pack": "npm run build && electron-builder --dir"
   },
@@ -16,13 +17,14 @@
     "appId": "com.easyboard.hktransportwidget",
     "productName": "EasyBoard",
     "directories": {
-      "output": "release"
+      "output": "dist-app"
     },
     "files": [
       "dist/**/*",
       "dist-electron/**/*"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         "portable"
       ]

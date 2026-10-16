@@ -99,14 +99,14 @@ export const AddTransportWizard: React.FC<AddTransportWizardProps> = ({ isZH, on
       setKmbStops(stops);
       if (stops.length > 0) setSelectedKmbStop(stops[0]);
 
-      // Pre-load names
+      // Pre-load all names into cache
       await KMBClient.getInstance().loadAllStopNames();
-      const nameMap = new Map<string, { en: string; tc: string }>();
-      for (const s of stops) {
-        const names = await KMBClient.getInstance().fetchStopName(s.stop);
-        nameMap.set(s.stop, names);
-      }
-      setKmbStopNames(nameMap);
+
+      // Parallelize stop name resolution for instant loading
+      const entries = await Promise.all(
+        stops.map(async (s) => [s.stop, await KMBClient.getInstance().fetchStopName(s.stop)] as const)
+      );
+      setKmbStopNames(new Map(entries));
     } catch (e) {
       console.error(e);
     } finally {
@@ -454,23 +454,36 @@ export const AddTransportWizard: React.FC<AddTransportWizardProps> = ({ isZH, on
                   <span>Loading KMB route catalogue...</span>
                 </div>
               ) : (
-                <div className="max-h-36 overflow-y-auto mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5 p-1 bg-slate-900/50 rounded-lg border border-slate-800">
+                <div className="max-h-40 overflow-y-auto mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5 p-1 bg-slate-900/50 rounded-lg border border-slate-800">
                   {kmbRoutes
                     .filter((r) => kmbSearch === '' || r.route.includes(kmbSearch))
                     .slice(0, 30)
                     .map((r, i) => {
-                      const isSel = selectedKmbRoute?.route === r.route && selectedKmbRoute?.bound === r.bound;
+                      const isSel =
+                        selectedKmbRoute?.route === r.route &&
+                        selectedKmbRoute?.bound === r.bound &&
+                        (selectedKmbRoute?.service_type || '1') === (r.service_type || '1');
+                      const isSpecial = r.service_type && r.service_type !== '1';
                       return (
                         <button
-                          key={`${r.route}-${r.bound}-${i}`}
+                          key={`${r.route}-${r.bound}-${r.service_type || '1'}-${i}`}
                           type="button"
                           onClick={() => handleSelectKmbRoute(r)}
-                          className={`flex items-center justify-between p-2 rounded text-left text-xs transition ${
-                            isSel ? 'bg-blue-600/30 text-blue-200 border border-blue-500/50' : 'hover:bg-slate-800 text-slate-300'
+                          className={`cursor-pointer flex items-center justify-between p-2 rounded-lg text-left text-xs transition duration-150 active:scale-[0.98] ${
+                            isSel
+                              ? 'bg-blue-600/30 text-blue-200 border border-blue-500/60 shadow-sm shadow-blue-500/20'
+                              : 'hover:bg-slate-800 text-slate-300 border border-transparent'
                           }`}
                         >
-                          <span className="font-bold text-slate-100 w-12">{r.route}</span>
-                          <span className="truncate text-[11px] text-slate-400 flex-1 px-1">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="font-bold text-slate-100">{r.route}</span>
+                            {isSpecial && (
+                              <span className="text-[9px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold whitespace-nowrap">
+                                {isZH ? `特別班 (${r.service_type})` : `Special (${r.service_type})`}
+                              </span>
+                            )}
+                          </div>
+                          <span className="truncate text-[11px] text-slate-400 pl-2">
                             {isZH ? `${r.orig_tc} 往 ${r.dest_tc}` : `${r.orig_en} to ${r.dest_en}`}
                           </span>
                         </button>
@@ -554,8 +567,8 @@ export const AddTransportWizard: React.FC<AddTransportWizardProps> = ({ isZH, on
                           key={`${r.route}-${i}`}
                           type="button"
                           onClick={() => handleSelectCtbRoute(r, 'O')}
-                          className={`flex items-center justify-between p-2 rounded text-left text-xs transition ${
-                            isSel ? 'bg-amber-600/30 text-amber-200 border border-amber-500/50' : 'hover:bg-slate-800 text-slate-300'
+                          className={`cursor-pointer flex items-center justify-between p-2 rounded-lg text-left text-xs transition duration-150 active:scale-[0.98] ${
+                            isSel ? 'bg-amber-600/30 text-amber-200 border border-amber-500/50' : 'hover:bg-slate-800 text-slate-300 border border-transparent'
                           }`}
                         >
                           <span className="font-bold text-slate-100 w-12">{r.route}</span>

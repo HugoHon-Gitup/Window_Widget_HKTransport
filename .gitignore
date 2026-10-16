@@ -6,7 +6,9 @@ node_modules/
 # Build outputs
 dist/
 dist-electron/
+dist-app/
 release/
+release-app/
 
 # Logs & temp files
 *.log
