@@ -8,7 +8,7 @@ import { TransportDetailView } from './TransportDetailView';
 import { WidgetGuideView } from './WidgetGuideView';
 import { SettingsView } from './SettingsView';
 import { Train, Bookmark, PlusCircle, HelpCircle, Settings } from 'lucide-react';
-import appLogo from '../../assets/icon.png';
+import { APP_LOGO_BASE64 } from '../../assets/logoBase64';
 
 export const ManagerLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'favourites' | 'add' | 'detail' | 'guide' | 'settings'>('favourites');
@@ -32,15 +32,9 @@ export const ManagerLayout: React.FC = () => {
           {/* Logo / Brand Header */}
           <div className="flex items-center gap-2.5 px-2 pt-1">
             <img
-              src={appLogo}
+              src={APP_LOGO_BASE64}
               alt="EasyBoard"
               className="w-8 h-8 rounded-xl shadow-md shadow-blue-500/20 object-cover"
-              onError={(e) => {
-                const target = e.currentTarget as HTMLImageElement;
-                if (!target.src.endsWith('icon.png')) {
-                  target.src = './icon.png';
-                }
-              }}
             />
             <div>
               <h1 className="font-extrabold text-sm tracking-tight text-slate-100">
