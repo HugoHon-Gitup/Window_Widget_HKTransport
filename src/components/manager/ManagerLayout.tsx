@@ -76,7 +76,7 @@ export const ManagerLayout: React.FC = () => {
         <div className="p-3 rounded-xl bg-slate-850/60 border border-slate-800 text-[11px] text-slate-400 space-y-1">
           <div className="flex items-center justify-between text-slate-300 font-semibold">
             <span>EasyBoard</span>
-            <span className="text-[10px] bg-slate-700 px-1.5 py-0.2 rounded text-slate-300">v1.0</span>
+            <span className="text-[10px] bg-slate-700 px-1.5 py-0.2 rounded text-slate-300">v1.0.1</span>
           </div>
           <p className="text-[10px] text-slate-500">
             {isZH ? '香港公共交通到站小工具' : 'Hong Kong Transit Desktop Widget'}

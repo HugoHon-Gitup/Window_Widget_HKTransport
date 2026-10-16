@@ -1,6 +1,7 @@
 {
   "files.watcherExclude": {
     "**/release/**": true,
+    "**/release-build/**": true,
     "**/dist-app/**": true,
     "**/dist/**": true,
     "**/dist-electron/**": true,
@@ -10,6 +11,7 @@
   },
   "search.exclude": {
     "**/release": true,
+    "**/release-build": true,
     "**/dist-app": true,
     "**/dist": true,
     "**/dist-electron": true,

@@ -9,6 +9,7 @@ dist-electron/
 dist-app/
 release/
 release-app/
+release-build/
 
 # Logs & temp files
 *.log

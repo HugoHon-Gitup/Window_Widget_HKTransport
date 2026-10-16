@@ -1,6 +1,6 @@
 {
   "name": "hk-transport-widget",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hong Kong Public Transport Desktop Widget for Windows",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "generate-icons": "powershell -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
-    "dist": "npm run build && electron-builder --win",
+    "dist": "powershell -ExecutionPolicy Bypass -File scripts/build-portable.ps1",
     "pack": "npm run build && electron-builder --dir"
   },
   "build": {

@@ -377,7 +377,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
       {/* 5. Version */}
       <div className="text-center text-xs text-slate-500 py-2">
-        <span>上車易 EasyBoard for Windows v1.0.0 (Build 1)</span>
+        <span>上車易 EasyBoard for Windows v1.0.1 (Build 2)</span>
       </div>
     </div>
   );
